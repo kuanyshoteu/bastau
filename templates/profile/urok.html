@@ -1,0 +1,163 @@
+{% load crispy_forms_tags %}
+<div class="ui modal" id="classwork_modal">
+    <i class="close icon"></i>
+    <div class="header text-center" style="background-color: #5181b8; color: white;">
+        Урок
+    </div>
+    <div class="content">
+        {% for classwork_last in classwork_list %}
+            <h3 class="text-center">{{ classwork_last.0.title }}</h3>
+            {{ classwork_last.0.get_markdown }}
+            <h4 class="text-center">Задачи:</h4>
+            <div class="ui grid">
+                <div class="twelve wide column left aligned text-center">
+                    <b>Условия</b>
+                </div>
+                <div class="four wide column left aligned">
+                    <b>Ответы</b>
+                </div>
+            </div>
+            <div class="tasks{{ classwork_last.0.id }}" id='tasks{{ classwork_last.0.id }}' last='{{ classwork_last.0.task_list.all|length }}'>
+                {% for task in classwork_last.2 %}
+                {% if profile == hisprofile and profile.status == 'student' %}
+                <div class="ui grid">
+                    <div class="twelve wide column" style="font-size: 15px;">
+                        {% if task.1.solved %}
+                            <span id="{{ task.0.id }}solved_tick" style="color: green;font-size: 16px; font-weight: 600;">✓</span>
+                            <span id="{{ task.0.id }}solved" style="margin-right: 10px; font-size: 16px; font-weight: 600; color: green;">{{ forloop.counter }}.</span>
+                            {% else %}
+                            <span id="{{ task.0.id }}solved_tick" style="color: green; display: none;font-size: 16px; font-weight: 600;">✓</span>
+                            <span id="{{ task.0.id }}solved" style="margin-right: 10px; font-size: 16px;font-weight: 600;">{{ forloop.counter }}.</span>
+                        {% endif %}
+
+                        {{ task.0.text }}
+                        {% if task.0.image %}
+                        <img style="height: 50px;" src="{{ task.0.image.url }}">
+                        {% endif %}
+                    </div>
+                    <div class="four wide column"
+                         style="font-size: 15px; display: inline-block;">
+                        <form class="ui form" method='POST' enctype='multipart/form-data'>{% csrf_token %}
+                            <textarea style="width: 100%" class="ans_textarea" type="text" id='check_task_answer{{ task.0.id }}'>{{ task.1.ans }}</textarea>
+                            <a class="ui button mini blue check_task_answer" id="{{ task.0.id }}" data-href='{{ task.0.change_answer_url }}' paper='hmw' style="width: 100%">✓</a>
+                        </form>
+                    </div>
+                </div>
+                {% endif %} 
+                {% if profile.status == 'trener' %}
+                <div class="ui grid">
+                    <div class="twelve wide column" style="font-size: 15px;padding-bottom: 0">
+                        <a class="open_edit_text" id='{{ task.0.id }}' style="font-size: 10px; cursor: pointer;">Изменить</a>
+                        <a class="delete_task" id='{{ task.0.id }}' data-href="{{ task.0.get_delete_url }}" style="font-size: 10px; margin-left: 10px;margin-right: 10px; color: red; cursor: pointer;">Удалить</a>
+                        <span style="font-size: 12px;">Цена: </span><img src='http://www.aaa-academy.kz/static/images/coins_gold.png' style="width: 15px;"><span class="{{ task.0.id }}task_cost{{ classwork_last.0.id }}" style="font-size: 12px;">{{ task.0.cost }}</span>                                       
+                        <br>
+                        <span id="{{ task.0.id }}task_number" style="margin-right: 10px; font-size: 16px;font-weight: 600;">{{ forloop.counter }}.</span>
+                        <span class="{{ task.0.id }}task_text{{ classwork_last.0.id }}">{{ task.0.text }}</span>
+                        {% if task.0.image %}
+                        <img style="height: 50px;" src="{{ task.0.image.url }}">
+                        {% endif %}
+
+                        <form class="ui form {{ task.0.id }}edit_text_form" method='POST' enctype='multipart/form-data' style="margin-bottom: 0; display: none;">{% csrf_token %}
+                            Условие: <textarea d='d' type="text" class='change_task_text{{ task.0.id }}{{ classwork_last.0.id }}' style="width: 100%; height: 60px; margin-bottom: 5px;">{{ task.0.text }}</textarea>
+                            Цена: <textarea type="text" class='change_task_cost{{ task.0.id }}{{ classwork_last.0.id }}' style=" height: 40px; padding: 5px;">{{ task.0.cost }}</textarea>
+                            <a class="ui button mini blue change_task_text" style="float: right;" paper_id="{{ classwork_last.0.id }}" id="{{ task.0.id }}" data-href='{{ task.0.change_text_url }}'>✓</a>
+                        </form>
+
+                    </div>
+                    <div class="four wide column" style="font-size: 15px; display: inline-block; padding-bottom: 0">
+                        <form class="ui form" method='POST' enctype='multipart/form-data'>{% csrf_token %}
+                            <textarea class="ans_textarea" type="text" id='check_task_answer{{ task.0.id }}{{ classwork_last.0.id }}' style="width: 100%">{{ task.0.answer }}</textarea>
+                            <a class="ui button mini blue check_task_answer" id="{{ task.0.id }}" paper_id="{{ classwork_last.0.id }}" data-href='{{ task.0.change_answer_url }}' style="width: 100%">✓</a>
+                        </form>
+                    </div>
+                </div>       
+                {% endif %} 
+                {% endfor %}
+            </div>
+
+                {% if profile == hisprofile and profile.status == 'student' %}
+                    <br>
+                    Правильно решено: <span number='{{ classwork_last.1 }}' id="hmw_number_of_solved" style="font-weight: 600">{{ classwork_last.1 }}</span> из <span style="font-weight: 600">{{ classwork_last.2|length }}</span>
+                {% endif %} 
+
+            {% if profile == hisprofile and profile.status == 'trener' %}
+                <br><br>
+              <a class="open_form_task" id='{{ classwork_last.0.id }}' style="margin-top:10px; cursor: pointer;">
+                  Добавить задачу
+              </a>
+              <br><br>    
+            <form class="ui form {{ classwork_last.0.id }}add_task add-problem" method='POST' style="display: none;" enctype='multipart/form-data'>{% csrf_token %}
+                <div class="ui grid">
+                    <div class="twelve wide column" style="font-size: 15px;padding-bottom: 0">
+                        <b>Условие</b>
+                        <textarea class="new_problem_text" type="text" id='new_problem_text{{ classwork_last.0.id }}' style="height: 110px; width: 100%;"></textarea>
+                    </div>
+                    <div class="four wide column" style="font-size: 15px;padding-bottom: 0">
+                        <b>Ответ</b>
+                        <br>
+                        <textarea  style="height: 46px;width: 100%;" class="new_problem_ans" type="text" id='new_problem_ans{{ classwork_last.0.id }}'></textarea>
+                        <br>
+                        <b>Цена задачи</b>
+                        <br>
+                        <textarea  style="height: 46px; width: 100%;" class="new_problem_cost" type="text" id='new_problem_cost{{ classwork_last.0.id }}'></textarea>
+                        </div>
+                </div>
+                <br>
+                <a class='ui blue button mini new_problem' id='{{ classwork_last.0.id }}' data-href='{{ classwork_last.0.add_task_url }}' style="margin-top:10px;">Добавить</a>
+            </form>
+
+            <div style="margin-top:10px; margin-bottom: 20px;">
+                <h4>Результаты групп:</h4>
+                {% for squad in classwork_last.4 %}
+                {% if squad.0 in classwork_last.0.squad_list.all %}
+                <a class="open_group_details_hmw ui segment {{ classwork_last.0.id }}{{ squad.0.id }}squad_results" id='{{ forloop.counter }}'
+                   style="padding: 10px 30px 10px; background-color: #5181b8; margin-right: 10px;color: white; outline: none;border-radius:2px;cursor: pointer;text-decoration: none;">
+                    {{ squad.0.title }}
+                </a>
+                {% else %}
+                <a class="open_group_details_hmw ui segment {{ classwork_last.0.id }}{{ squad.0.id }}squad_results" id='{{ forloop.counter }}'
+                   style="padding: 10px 30px 10px; background-color: #5181b8; margin-right: 10px;color: white; outline: none;border-radius:2px;cursor: pointer;text-decoration: none; display: none;">
+                    {{ squad.0.title }}
+                </a>
+                {% endif %}
+                {% endfor %}
+                {% for squad in classwork_last.4 %}
+                <table class="ui celled table text-center group_details" id='{{ forloop.counter }}details_hmw'
+                       style="width: 50%; display: none;">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>ex hw</th>
+                        <th>hw</th>
+                        <th>Class</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for squad_results in squad.1 %}
+                    <tr>
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+                        <td><p>{{ squad_results.0.user }}</p></td>
+                        <td><p>{{ squad_results.1 }}%</p></td>
+                        <td><p>{{ squad_results.1 }}%</p></td>
+                        <td><p>{{ squad_results.1 }}%</p></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endfor %}
+                <br><br>
+                    {% if profile == hisprofile or profile.user.username == main_page.admin_name %}
+                        <a href="{{ classwork_last.0.get_delete_url }}" style="float: right;">
+                            <i class="trash alternate icon" style="font-size: 18px; color: red;"></i>
+                        </a>
+                        <br>
+                    {% endif %}
+            </div>
+            {% endif %}
+        <div class="ui divider" style="margin: 60px 0 !important;"></div>
+        {% endfor %}
+    </div>
+</div>

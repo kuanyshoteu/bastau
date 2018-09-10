@@ -1,0 +1,74 @@
+<style type="text/css">
+    .de{
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+</style>
+<div class="ui segment" style="padding: 0">
+    {% if idet_urok %}
+    <div class="header text-center" style="background-color: #5181b8; color: white; padding: 14px;">
+        <h3>Идет урок</h3>
+    </div>
+    {% endif %}
+</div>                 
+<div class="ui raised card " style="width: 100%;">
+    <div class="content">
+        <div class="right floated" style="padding-right: 14px;">
+            <span style="font-size: 18px;" id="hiscoins">{{ hisprofile.coins }}</span>
+        </div>
+        <div class="header">
+            {{ hisprofile.user }}
+        </div>
+        <div class="meta">
+            <a class="open_form_status" style="color: #828282;"><span class="hisstatus">{{ hisprofile.status }}</span></a>
+        </div>
+        <div class="description">
+            {% if profile.user.username == main_page.admin_name %}
+            <form class="ui form update_status" style="display: none; width: 200px;" method='POST'
+                  enctype="multipart/form-data">{% csrf_token %}
+                <textarea style="width: 150px;" type='text' class="textarea_status">{{ hisprofile.status }}</textarea>
+                <a class='ui button blue mini change_status' data-href='{{ hisprofile.change_status_url }}'>Сохранить</a>
+            </form>
+            {% endif %}
+            <div class="ui divider"></div>                                    
+            <div class="ui grid">
+                <div class="four wide column de">
+                    <p style="color: #828282;">День рождения: </p>
+                </div>
+                <div class="twelve wide column de">
+                    <p><a href="">{{ hisprofile.birthdate }}</a></p>
+                </div>
+                <div class="four wide column de">
+                    <p style="color: #828282;">Место учебы: </p>
+                </div>
+                <div class="twelve wide column de">
+                    <p><a href="">{{ hisprofile.school }}</a></p>
+                </div>
+                {% if hisprofile.status == 'trener' %}
+                <div class="four wide column de">
+                        <p style="color: #828282;">Тренер групп: </p>
+                </div>
+                <div class="twelve wide column de">
+                    <p>
+                    {% for sq in hisprofile.squad_trener.all %}
+                        <a href="{{ sq.get_absolute_url }}">
+                            {{ sq.title }}
+                        </a>{% if forloop.counter < hisprofile.squad_trener.all|length %}, {% endif %}
+                    {% endfor %}
+                    </p>
+                </div>
+                {% endif %}
+                <div class="four wide column de">
+                    <p style="color: #828282;">Группы: </p>
+                </div>
+                <div class="twelve wide column de">
+                        {% for sq in hisprofile.squads.all %}
+                        <a href="{{ sq.get_absolute_url }}">
+                            {{ sq.title }}
+                        </a>{% if forloop.counter < hisprofile.squads.all|length %}, {% endif %}
+                        {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

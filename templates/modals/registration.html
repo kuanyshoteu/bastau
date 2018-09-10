@@ -1,0 +1,20 @@
+
+
+<div class="ui tiny modal" id="registration-modal">
+    <i class="close icon"></i>
+    <div class="header text-center">
+        Registration
+    </div>
+    <div class="content">
+        <form method='POST' action='' enctype='multipart/form-data' CLASS="ui form">{% csrf_token %}
+
+            <div class="ui input text-center" id="go-ahead-r">
+            {{ reg_form }}
+            </div>
+            <input type='submit' class='ui button green btn-go' value='Registration' />
+
+        </form>
+    </div>
+
+</div>
+

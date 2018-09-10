@@ -1,0 +1,91 @@
+{% load crispy_forms_tags %}  
+<div class="paper-features">
+    {% if profile == hisprofile %}
+    <a class="open_form_task ui blue" id='{{ forloop.counter }}' style="margin-top:10px; cursor: pointer; float: right;">
+        <i class="icon plus circle" style="font-size: 25px; color: #21BA45"></i>
+    </a>
+    <br><br>    
+    <form class="ui form {{ forloop.counter }}add_task add-problem" method='POST' style="display: none;"
+          enctype='multipart/form-data'>{% csrf_token %}
+        <input type='hidden' name='paper_idd' value='{{ paper.0.id }}'>
+        <input type='submit' class='ui blue button mini' style="margin-top:10px" value='Добавить'/>
+    </form>
+    {% endif %}
+
+    <div style="margin-top:10px; margin-bottom: 20px;">
+        <h4>Результаты групп:</h4>
+        {% for squad in paper.4 %}
+        {% if squad.0 in paper.0.squad_list.all %}
+        <a class="open_group_details ui segment {{ paper.0.id }}{{ squad.0.id }}squad_results" id='{{ forloop.counter }}'
+           style="padding: 10px 30px 10px; background-color: #5181b8; margin-right: 10px;color: white; outline: none;border-radius:2px;cursor: pointer;text-decoration: none;">
+            {{ squad.0.title }}
+        </a>
+        {% else %}
+        <a class="open_group_details ui segment {{ paper.0.id }}{{ squad.0.id }}squad_results" id='{{ forloop.counter }}'
+           style="padding: 10px 30px 10px; background-color: #5181b8; margin-right: 10px;color: white; outline: none;border-radius:2px;cursor: pointer;text-decoration: none; display: none;">
+            {{ squad.0.title }}
+        </a>
+        {% endif %}
+        {% endfor %}
+        {% for squad in paper.4 %}
+        <table class="ui celled table text-center group_details" id='{{ forloop.counter }}details'
+               style="width: 50%; display: none;">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>ex hw</th>
+                <th>hw</th>
+                <th>Class</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for squad_results in squad.1 %}
+            <tr>
+                <td>
+                    {{ forloop.counter }}
+                </td>
+                <td><p>{{ squad_results.0.user }}</p></td>
+                <td><p>{{ squad_results.1 }}%</p></td>
+                <td><p>{{ squad_results.1 }}%</p></td>
+                <td><p>{{ squad_results.1 }}%</p></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% endfor %}
+        <br><br>
+
+        {% if profile == hisprofile %}
+        <a class="open_groups" id='{{ forloop.counter }}' style="cursor: pointer; font-size: 14px;">
+            Управление списком групп:
+        </a>
+        <form style="display: none; margin-top: 10px;" method="POST"
+              class="groups{{ forloop.counter }}" action='' enctype='multipart/form-data'>
+            {% csrf_token %}
+            {% for squad in profile.squad_trener.all %}
+                {% if squad in paper.0.squad_list.all %}
+                <a class="add_group_btn" id="{{ paper.0.id }}{{ squad.id }}add_group_btn" paper_id='{{ paper.0.id }}' squad_id='{{ squad.id }}' isin='yes' data-href='{{ paper.0.api_url_add_group }}'
+                   style="padding: 10px 30px 10px; background-color: #5181b8; margin-right: 10px;color: white; outline: none;border-radius:2px;cursor: pointer;text-decoration: none;">
+                    {{ squad.title }}
+                </a>
+                {% else %}
+                <a class="add_group_btn"  paper_id='{{ paper.0.id }}' squad_id='{{ squad.id }}' isin='no' data-href='{{ paper.0.api_url_add_group }}'
+                   style="padding: 10px 30px 10px; background-color: #fff; margin-right: 10px;color: black; outline: none;border-radius:2px;cursor: pointer;text-decoration: none;">
+                    {{ squad.title }}
+                </a>
+                {% endif %}
+            {% endfor %}
+            <br>
+        </form>
+        {% endif %}
+            {% if profile == hisprofile or profile.user.username == main_page.admin_name %}
+                <a href="{{ paper.0.get_delete_url }}" style="float: right;">
+                    <i class="trash alternate icon" style="font-size: 18px; color: red;"></i>
+                </a>
+                <br>
+            {% endif %}
+
+    </div>
+</div>

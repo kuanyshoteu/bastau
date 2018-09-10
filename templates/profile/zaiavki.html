@@ -1,0 +1,70 @@
+{% if profile.user.username == main_page.admin_name and profile == hisprofile %}
+<div class="ui tab {% if 'profile_zaiavki' in profile.page %}active{% endif %}" data-tab="zaiavki">
+    <div class="ui raised card" style="padding: 1.5em;">
+        <h4>Заявки</h4>
+        <table class="ui celled table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Время</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for z in zaiavkas %}
+            <tr>
+                <td>
+                    <a style="cursor: pointer;" class="delete_zaiavka" id="{{ forloop.counter }}"
+                       data-href='{{ z.get_api_deletezaiavka_url }}'>
+                        <i class="times circle icon" id='zaiavka{{ forloop.counter }}'
+                           style="font-size: 18px;"></i>
+                    </a>
+                    {{ forloop.counter }}
+                </td>
+                <td><p id='zaiavka_name_{{ forloop.counter }}'>{{ z.name }}</p></td>
+                <td><p id='zaiavka_phone_{{ forloop.counter }}'>{{ z.phone }}</p></td>
+                <td><p id='zaiavka_time_{{ forloop.counter }}'>{{ z.timestamp }}</p></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h4>Записались на группы</h4>
+        <table class="ui celled table text-center">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Имя</th>
+                <th>Группа</th>
+                <th>Телефон</th>
+                <th>Время</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for z in zapisi %}
+            <tr>
+                <td>
+                    <a style="cursor: pointer;" class="delete_follow" id="{{ forloop.counter }}"
+                       data-href='{{ z.get_api_deletefollow_url }}'>
+                        <i class="times circle icon" id='follow{{ forloop.counter }}'
+                           style="font-size: 18px; color: red;"></i>
+                    </a>
+                    {{ forloop.counter }}
+                </td>
+                <td><a href="{{ z.author_profile.get_absolute_url }}"
+                       id='follow_user_{{ forloop.counter }}'>
+                    {{ z.author_profile.user }}
+                </a></td>
+                <td><a href="{{ z.group.get_absolute_url }}" id='follow_group_{{ forloop.counter }}'>
+                    {{ z.group.title }}
+                </a></td>
+                <td><p id='follow_phone_{{ forloop.counter }}'>{{ z.author_profile.phone }}</p></td>
+                <td><p id='follow_time_{{ forloop.counter }}'>{{ z.timestamp }}</p></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endif %}

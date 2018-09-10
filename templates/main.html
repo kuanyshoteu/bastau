@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<div id="main-part">
+	<div class="main-header-part">
+		<div class="ui column centered grid" id="content-choice">
+			<div class="ui segment" id="segment-choice">
+				      <div id='stars'></div>
+                    <div id='stars2'></div>
+    
+                <div class="content">
+					<h1 class="words">Individual math coach.</h1>
+					<h2 class="white up">For everyone.</h2>
+					<a href='{% url "register" %}'>
+						<button class="btn-journey">Start your journey.</button>
+					</a>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="statistics center aligned ui grid">
+        <div class="ui statistics">
+            <div class="statistic">
+                <div class="value">
+                    22
+                </div>
+                <div class="label">
+                    Courses
+                </div>
+            </div>
+            <div class="statistic">
+                <div class="text value">
+                    Three<br>
+                    Thousand
+                </div>
+                <div class="label">
+                    Signups
+                </div>
+            </div>
+            <div class="statistic">
+                <div class="value">
+                    <i class="trophy icon"></i> 5
+                </div>
+                <div class="label">
+                    Competitions
+                </div>
+            </div>
+            <div class="statistic">
+                <div class="value">
+                    42
+                </div>
+                <div class="label">
+                    Olympiads
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="third-part ui grid center aligned">
+        <div class="column">
+            <h2 class="ui header"><i class="question circle icon"></i>What is Bastau Academy?</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab aut cum, delectus, dolores est eveniet facere fuga id inventore odio perferendis reprehenderit voluptates. Ab aliquid asperiores consectetur consequuntur delectus dicta dignissimos dolore dolores doloribus fuga id, labore maiores minus modi nam obcaecati, officia optio possimus praesentium quaerat sed, sequi ullam. Aliquid atque commodi dicta dignissimos distinctio error, in laudantium magni nesciunt nostrum odio optio quasi quis quo quos soluta vel, voluptatibus! Asperiores autem consectetur debitis deleniti distinctio doloribus earum eligendi est expedita explicabo facere fuga id iusto laboriosam laborum nemo, neque odio pariatur perferendis quam qui quod reprehenderit. Accusantium asperiores at commodi consectetur, cum dicta dignissimos distinctio dolorem dolorum ducimus error et eum fugit illum incidunt laborum laudantium necessitatibus neque, nulla numquam officia perferendis quam quia quos repellendus similique suscipit temporibus vero voluptate voluptatum. Aliquid, amet architecto aut beatae eligendi eos et eveniet nihil non numquam obcaecati omnis perspiciatis sunt, tempora tenetur, vel voluptatibus? Animi dignissimos, ducimus eligendi et laboriosam quos tempora tenetur. Consectetur distinctio eveniet labore, magni maxime nam nihil odit ratione soluta. Aliquam architecto consectetur cum dignissimos dolore earum eligendi, enim eos esse eum excepturi explicabo facilis impedit iste itaque iusto laudantium necessitatibus nostrum nulla officiis omnis quasi quia quidem quod, quos repellendus rerum sapiente sed tempora temporibus totam velit veniam vitae? Animi corporis culpa enim esse, itaque maxime nostrum sed sunt! Accusamus, culpa dicta dolorem dolores earum eum explicabo harum id, illum officia repellat repudiandae soluta temporibus ut vel. Consequatur illo minus quaerat quidem quis soluta tenetur!</p>
+        </div>
+
+    </div>
+    <div class="fourth-part ui grid center aligned">
+        <div class="ui column">
+            <h2 class="ui header"><i class="question circle icon"></i>What can you do on Bastau Academy?</h2>
+            <div class="ui grid four column center aligned">
+                <div class="column">
+                    <i class="closed captioning outline icon huge"></i>
+                    <h3 class="ui header">Olympiads</h3>
+                </div>
+                <div class="column">
+                    <i class="book icon huge"></i>
+                    <h3 class="ui header">Courses</h3>
+                </div>
+                <div class="column">
+                    <i class="trophy icon huge"></i>
+                    <h3 class="ui header">Rating</h3>
+                </div>
+                <div class="column">
+                    <i class="newspaper outline  icon huge"></i>
+                    <h3 class="ui header">News</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fifth-part">
+        <h2 class="ui header text-center"><i class="money bill alternate outline icon"></i>Bastau Pricing</h2>
+        <div class="ui grid centered aligned">
+            <div class="ui three wide column segment first-col text-center">
+                <h3>Basic</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur aut debitis dolor ducimus incidunt minus obcaecati rem tenetur voluptatum. Assumenda, at consequatur, consequuntur distinctio eos hic neque nisi, officia optio quam quidem sed sint suscipit!</p>
+                <a href="#" class="ui button inverted blue">10 000 kzt per month</a>
+            </div>
+            <div class="ui three wide column segment second-col text-center">
+                <h3>Standard</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. At blanditiis distinctio eum id illum inventore, ipsa laboriosam natus necessitatibus nihil obcaecati praesentium provident qui, quo repudiandae saepe ullam unde. Delectus id laboriosam nemo vel veniam!</p>
+                <a href="#" class="ui button inverted blue">20 000 kzt per month</a>
+            </div>
+            <div class="ui three wide column segment third-col text-center">
+                <h3>Pro</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam cum facere facilis quisquam, rem sed unde. Commodi debitis eligendi mollitia officia perferendis quam unde, vitae voluptatibus! Aliquid dolorum facere inventore ipsam, officiis perferendis quo tenetur!</p>
+                <a href="#" class="ui button inverted blue">30 000 kzt per month</a>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock content %}

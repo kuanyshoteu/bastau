@@ -1,0 +1,301 @@
+{% load crispy_forms_tags %}
+<div class="ui tab {% if 'profile_info' in profile.page or hisprofile.status == 'student' %}active{% endif %}" data-tab="info">
+    {% include 'profile/urok.html' %}
+    
+    <div class="ui segment">
+    	<i class="phone icon"></i>
+        <b>Телефон:</b> {{ hisprofile.phone }}
+        <br>
+        <i class="map marker alternate icon icon"></i>    
+        <b>Город:</b> {{ hisprofile.city }} 
+    </div>
+    {% if hisprofile.status == 'trener' %}
+<!--     <div class="ui segment">
+        <canvas id="myChart" width="400" height="200"></canvas>
+    </div>
+ -->    {% endif %}
+         {% if hisprofile.status == 'student' %}
+            {% for sq in hisattendance %}
+                <div class="ui segment" style="padding: 14px">
+                <h4>    
+                    Оценки по <a href="{{ sq.0.get_absolute_url }}">{{ sq.0.title }}</a>:
+                </h4>
+                Всего оценок <b>{{ sq.4 }}</b>{% if sq.4 > 0 %}, средняя оценка: <b>{{ sq.3 }}</b>{% endif %}
+                <div class="content" >
+                    <form class="ui form" method='POST' style="display:flex;height:auto;">{% csrf_token %}
+                            <div style="padding-right: 0; width:auto;">
+                                <table class="ui celled table text-center" style="background-color: #4a4a4a; color: white; width: auto;">
+                                    <tbody>
+                                        <tr>
+                                            <th style="padding: 14px 0;color: #4a4a4a;">_<br>_</th>
+                                        </tr>
+                                        {% for profile in sq.2 %}
+                                        {% if profile.0 != sq.0.author_profile %}
+                                        <tr style="height: 96px;">
+                                            <td>
+                                                {{ profile.0.user }}
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="overflow: auto; overflow-y:hidden; padding-left: 0;width:auto; height: auto;">
+                                <table class="ui celled table text-center" style="background-color: #4a4a4a; color: white">
+                                    <tbody>
+                                        <tr>
+                                            {% for time in sq.1 %}
+                                            <th style=" padding: 14px 0;">
+                                                {{ time }}
+                                            </th>
+                                            {% endfor %}
+                                        </tr>
+                                        {% for profile in sq.2 %}
+                                        {% if profile.0 != sq.0.author_profile %}
+                                        <tr style="height: 96px;">
+                                            {% for att in profile.1 %}
+                                            <td>
+                                                        <div class="ui segment" style="padding: 5px; height: 30px; width: 70px; color: black; margin-bottom: 0" type="text" id='grade{{ att.id }}'>{% if att.grade > 0 %}{{ att.grade }}{% endif %}</div>
+                                                        <br>
+                                                        {% if att.present == 'present' %}
+                                                        <a class="ui button mini present green disabled" style="opacity: 1 !important;">
+                                                            На уроке
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if att.present == 'absent' %}
+                                                        <a class="ui button mini absent red disabled" style="opacity: 1 !important;">
+                                                            Отсутсвует
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if att.present == 'late' %}
+                                                        <a class="ui button mini late yellow disabled" style="opacity: 1 !important;">
+                                                            Опоздал
+                                                        </a>               
+                                                        {% endif %}
+                                                        {% if att.present != 'present' and att.present != 'absent' and att.present != 'late' %}
+                                                        <a class="ui button mini disabled" style="opacity: 1 !important; background-color: #4a4a4a; color: #4a4a4a">
+                                                            _
+                                                        </a>               
+                                                        {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        <div class="ui segment">
+            <h4 style="margin-bottom: 0; margin-top: 0;">
+                {% if hisprofile.status == 'student' %}
+                Графики успеваемости в группах:
+                {% elif hisprofile.status == 'trener' %}
+                Графики успеваемости групп:
+                {% endif %}
+            </h4>
+            {% if hischarts|length == 0 %}
+                <i>У Вас еще нет групп</i>
+            {% endif %}
+
+        </div>
+	    {% for sq in hischarts %}
+            <div class="ui segment" style="overflow-x: scroll;">
+                <div class="chartWrapper">
+                    <div class="chartAreaWrapper">
+                        <div class="chartAreaWrapper2">
+                            <canvas id="{{ sq.0.title }}chart" width="800" height="400"></canvas>
+                        </div>
+                    </div>
+                    <canvas id="axis-Test" height="300" width="0"></canvas>
+                </div>
+
+<!--         	    <canvas id="{{ sq.0.title }}chart" width="400" height="200"></canvas> -->
+        	    <script>
+                    var ctx = document.getElementById("{{ sq.0.title }}chart");
+                    new Chart(ctx, {
+        		        type: 'line', 
+        		        maintainAspectRatio: false,
+                        responsive: true,
+                        data: {
+        		            labels: [{% for ppr in sq.1 %}'{{ ppr.0.title }}',{% endfor %} 'Следующий урок'],
+        		            datasets: [{
+        		                data: [{% for ppr in sq.1 %}{% if ppr.0.is_homework %}{{ ppr.1 }},{% endif %}{% endfor %} 0],
+        		                label: "Домашние работы",
+        		                borderColor: "blue",
+        		                fill: false
+        		            }, 
+        		            {
+        		                data: [{% for ppr in sq.1 %}{% if not ppr.0.is_homework %}{{ ppr.1 }},{% endif %}{% endfor %} 0],
+        		                label: "Классные работы",
+        		                borderColor: "#21BA45",
+        		                fill: false
+        		            },]
+        		        },
+        		        options: {
+        		            title: {
+        		                display: true,
+        		                text: '{{ sq.0.title }}'
+        		            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true,
+                                        fontSize: 12,
+                                        suggestedMax: 100,
+                                    }
+                                }],
+                                xAxes: [{
+                                    ticks: {
+                                        fontSize: 9,
+                                    }
+                                }]
+                            },
+        		        },
+                        animation: {
+                            onComplete: function () {
+                                if (!rectangleSet) {
+                                    var scale = window.devicePixelRatio;                       
+
+                                    var sourceCanvas = chartTest.chart.canvas;
+                                    var copyWidth = chartTest.scales['y-axis-0'].width - 10;
+                                    var copyHeight = chartTest.scales['y-axis-0'].height + chartTest.scales['y-axis-0'].top + 10;
+
+                                    var targetCtx = document.getElementById("axis-Test").getContext("2d");
+
+                                    targetCtx.scale(scale, scale);
+                                    targetCtx.canvas.width = copyWidth * scale;
+                                    targetCtx.canvas.height = copyHeight * scale;
+
+                                    targetCtx.canvas.style.width = `${copyWidth}px`;
+                                    targetCtx.canvas.style.height = `${copyHeight}px`;
+                                    targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth * scale, copyHeight * scale, 0, 0, copyWidth * scale, copyHeight * scale);
+
+                                    var sourceCtx = sourceCanvas.getContext('2d');
+
+                                    // Normalize coordinate system to use css pixels.
+
+                                    sourceCtx.clearRect(0, 0, copyWidth * scale, copyHeight * scale);
+                                    rectangleSet = true;
+                                }
+                            },
+                            onProgress: function () {
+                                if (rectangleSet === true) {
+                                    var copyWidth = chartTest.scales['y-axis-0'].width;
+                                    var copyHeight = chartTest.scales['y-axis-0'].height + chartTest.scales['y-axis-0'].top + 10;
+
+                                    var sourceCtx = chartTest.chart.canvas.getContext('2d');
+                                    sourceCtx.clearRect(0, 0, copyWidth, copyHeight);
+                                }
+                            }
+                        }
+
+
+        		    });
+        		</script>
+        		<br><br>
+            </div>
+        
+		{% endfor %}
+	
+
+    <div class="ui segment">
+        <h4>Задания:</h4>
+        <div class="docs">
+            {% include 'profile/trello_cards.html' %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <h4>Комментарии:</h4>
+        <div class="comments">
+        {% if hisprofile.comments.all|length == 0 %}
+            <i>Комментариев еще не было оставлено</i>
+        {% endif %}
+        {% for comment in hisprofile.comments.all %}
+            <div class="comment ui grid">
+                <div class="two wide column" style="padding-right: 0">
+                  {% if comment.author_profile.image %}
+                    <img class="ui avatar image" src="{{ comment.author_profile.image.url }}">
+                  {% endif %}
+                </div>
+                <div class="fourteen wide column" style="padding-left: 0">
+                  <a href="{{ comment.author_profile.get_absolue_url }}">{{ comment.author_profile.user }}</a>
+                  <br>
+                  {{ comment.content }}
+                  <br>
+                  {% if comment.ffile.all|length > 0 %}
+                    {% for file in comment.ffile.all %}
+                      <a href="{{ file.url }}">{{ file.file }}</a>
+                    {% endfor %}
+                      <br>
+                  {% endif %}
+                  {% if comment.image %}
+                      <img src="{{ comment.image.url }}" style="width: 50px;">
+                      <br>
+                  {% endif %}
+                  <span style="color: grey; font-size: 12px; font-weight: 400; cursor: pointer;">{{ comment.timestamp|timesince }} назад</span>
+                </div>                                    
+            </div>
+              {% if forloop.counter < hisprofile.comments.all|length %}
+                <div class="ui divider"></div>
+              {% else %}
+                <div class="ui grid" style="margin-top: 0">
+                  <div class="sixteen wide column" style="padding: 0">
+                    <div class="ui divider"></div>
+                  </div>
+                </div>
+              {% endif %}                  
+
+        {% endfor %}
+        </div>
+    </div>
+</div>
+    {% if hisprofile.status == 'trener' %}
+
+<!-- <script>
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for profile in all_profiles %}{% if profile.status == 'trener' %}"{{ profile.user }}",{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Vawi rezultati',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+</script>
+ -->    {% endif %}
+
+

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{{ object }}
+<div class='ui container' id="problem-solve">
+    <h3 style="margin-top: 10px"> <a class="ui button blue" href="{{ problem.content_object.get_absolute_url }}">
+        <i class="arrow left icon"></i>Olympiad: {{ problem.content_object.title }}</a> <a href='{{ problem.content_object.rating_url }}'>Results</a>
+                 
+        {% if request.user == problem.user %}
+        <a href='{{ problem.get_delete_url }}' class="ui tiny button" style="margin-left: 30px">Delete</a>
+        {% endif %}
+    </h3>
+</div>
+
+<div class='ui container grid' id="problem-solve" style="margin-top:33px; background-color: #2c333b;">
+    <div class="sixteen wide column" >            
+        <div class="" style="background-color: #2c333b; color: #Fff;">
+            <h4>Problem {{ problem.title }} <a href="{{ problem.get_profile }}" style="margin-left: 30px">by {{ problem.user }}</a>
+            </h4>
+            {% for hs in ht_array %}
+                <a href="{{ hs.url }}" style="color: lightgrey">#{{ hs.name }}</a>
+            {% endfor %}
+            <br>
+            {{ problem.content2 }}
+            {% if check_problem.solved == False %}
+                 <h4 style="color: red;">Not solved
+            {% else %}
+                <h4 style="color: lightgreen;">Solved <i class="icon check"></i>
+            {% endif %}
+            </h4>
+        </div>
+    </div>
+        
+    <div class="eleven wide column" >
+        <form method="POST" action='' enctype='multipart/form-data'> {% csrf_token %}
+            <div class='ui container grid' id="problem-solve" style="background-color: #2c333b;">
+                <div class="eleven wide column" style="margin-left: 230px;">
+                    <div class="ui form" id="form-solve-problem">
+                            {{ check_problem_form }}
+                        <style type="text/css">#id_expr1{width: 100%}</style>
+                    </div>
+                    <button type='submit' name = 'check' class='ui button tiny blue' style="margin-top: 10px;">Check</button>
+                    <span class=" btn-s1" style="margin-left: 35px;color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer;">√</span>
+                    <span class=" btn-s2" style="color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer">sin</span>
+                    <span class=" btn-s3" style="color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer">cos</span>
+                    <span class=" btn-s4" style="color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer">tan</span>
+                    <span class=" btn-s5" style="color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer">ctan</span>
+                    <span class=" btn-s6" style="color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer">log</span>
+                    <span class=" btn-s7" style="color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer">∑</span>
+                    <span class=" btn-s8" style="color: #fff;font-weight: 600;margin-right: 25px;cursor: pointer">∞</span>
+                    <div class="ui segment" style="background-color: #fff;">
+                        {% if check_problem.current_string == '' %}
+                            <h5 style="color: grey;">Your expression will be here 
+                        {% else %}
+                            <h5>{{ check_problem.current_string }} 
+                                {% if check_problem.current_status == 'Need to prove' %}
+                                    <i class="icon exclamation circle" style="color: orange; font-size: 18px;"></i>
+                                {% elif check_problem.current_status == 'Correct' %}
+                                    <i class="icon check circle" style="color: green; font-size: 18px;"></i>
+                                {% elif check_problem.current_status == 'Exception' %}    
+                                    <i class="times circle icon" style="color: red; font-size: 18px;"></i>
+                                {% endif %}
+                                 
+                        {% endif %}
+                        </h5> 
+                    </div>
+                    <button type='submit' name = 'clear' class='ui button tiny'>Clear</button>
+                    <button type='submit' name = 'save' class='ui button tiny blue '>Save</button> 
+                </div>  
+                <div class="five wide column" style="position: absolute; margin-left: -15px;">
+                    <div class="ui segment" style="border: 1px solid #8b8b8b; background-color: #2c333b;padding:10px 0 ">             
+                        <h4 style="color: white;    text-align: center;">Theorems</h4>
+                        <div class="ui category search">
+                          <div class="ui icon input">
+                            <input class="prompt" type="text" placeholder="Search theorems" style="width: 218px;border-radius: 0;">
+                            <i class="search icon"></i>
+                          </div>
+                          <div class="results"></div>
+                        </div>
+                        {% for thrm in theorems %}
+                            <button type='submit' name = '{{ thrm.name }}' style="background: transparent;border: none;margin-top: 10px;margin-bottom: 10px;color: #fff;font-weight: 600;cursor:pointer;width: 196px;text-align: left">{{ thrm.name }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </form> 
+    </div>
+    <div class="five wide column" >
+<!--             <h4 style="color: white">{% if check_problem.actions|length == 0 %}
+                    Here will be your saved expressions{% endif %}{% if check_problem.actions|length > 0 %}
+                    {{ check_problem.actions|length }} expression{% if check_problem.actions|length > 1 %}s{% endif %}:
+                {% endif %}
+            </h4>
+    --> {% for c in check_problem.actions %}
+            <div class="ui segment" style="border: 1px solid #8b8b8b; background-color: #2c333b;">
+                {% if c.1 != 'f' %}
+                    <form method="POST" action='' enctype='multipart/form-data'>{% csrf_token %}
+                        <div class="ui input">
+                            <input type='hidden' name='exp_id' value='{{ forloop.counter }}'>
+                            <p style="color: white">{{ c.0 }}</p><p style="margin-left: 10px;">
+                                {% if c.1 == 'Need to prove' %}
+                                    <i class="icon exclamation circle" style="color: orange; font-size: 18px;"></i>
+                                {% elif c.1 == 'Correct' %}
+                                    <i class="icon check circle" style="color: green; font-size: 18px;"></i>
+                                {% elif c.1 == 'Wrong' %}    
+                                    <i class="times circle icon" style="color: red; font-size: 18px;"></i>
+                                {% endif %}    
+                            </p>
+                            <button type="submit" name='use' class='ui tiny button' style="margin-left: 10px;height: 30px;">
+                                use
+                            </button>
+                        {% if c.2 == 'not_in_task' %}
+                        <button type='submit' name='delete' class='ui tiny button'
+                                style="margin-left:5px;height: 30px;">delete
+                        </button>    {% endif %}  
+                        </div>
+                    </form>
+                {% endif %}
+            </div>    
+        {% endfor %}
+    </div>  
+<script type="text/javascript">
+    $(function (){
+        $('.btn-s1').on('click', function () {
+            $('#form-solve-problem textarea').append(" ").append('√( )').append(" ");
+        });
+         $('.btn-s2').on('click', function () {
+            $('#form-solve-problem textarea').append(" ").append('sin( )').append(" ");
+        });
+          $('.btn-s3').on('click', function () {
+            $('#form-solve-problem textarea').append(" ").append('cos( )').append(" ");
+        });
+           $('.btn-s4').on('click', function () {
+            $('#form-solve-problem textarea').append(" ").append('tan( )').append(" ");
+        
+        });
+            $('.btn-s5').on('click', function () {
+            $('#form-solve-problem textarea').append(" ").append('ctan( )').append(" ");
+        });
+             $('.btn-s6').on('click', function () {
+            $('#form-solve-problem textarea').append(" ").append('log( , )').append(" ");
+        });
+              $('.btn-s7').on('click', function () {
+            $('#form-solve-problem textarea').append(" ").append('∑').append(" ");
+        });
+    });
+</script>
+{% endblock content %}

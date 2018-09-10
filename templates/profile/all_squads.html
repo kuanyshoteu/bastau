@@ -1,0 +1,16 @@
+<div class="ui {% if 'profile_squads' in profile.page %}active{% endif %} tab" data-tab="squads">
+    <div class="ui grid">
+        {% for sq in all_squads %}
+        <div class="four wide column">
+            <div class="ui segment">
+                <h4><a href="{{ sq.get_absolute_url }}">{{ sq.title }}</a></h4>
+                <span style="color: grey;">Список группы:</span>
+                {% for follower in sq.followers.all %}
+                <br>
+                <a href="{{ follower.get_absolute_url }}">{{ follower.user }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,42 @@
+{% load crispy_forms_tags %}  
+<style>
+    .textinput{
+        width: 100%;
+    }
+</style>                      
+<div class="ui raised card" style="padding: 13px; margin-top: 0">
+    <div class="image">
+    </div>
+    <div class="content" style="padding: 13px 0 0 0;">
+        {% if user == hisprofile.user %}
+        <a class="open_form ui button mini full-w">Редактировать</a>
+        <form class="ui form update_form" style="display: none;" method='POST' action=''
+              enctype="multipart/form-data" class="ui form">{% csrf_token %}
+            {{ form|crispy }}
+            <input type='submit' class='ui button blue mini' value='Сохранить'/>
+        </form>
+        {% endif %}
+    </div>
+</div>
+<div class="ui segment">
+    <div class="ui grid center aligned">
+        {% if profile == hisprofile or profile.user.username == main_page.admin_name %}
+        <div class="sixteen wide column">
+            <a class="open_page ui button mini full-w blue" data-href="{{ profile.change_page_url }}" page='classwork' onclick="$('#classwork_modal').modal('show')" >Урок</a>
+            <a class="open_page ui button mini full-w blue" data-href="{{ profile.change_page_url }}" page='homework' onclick="$('#homework_modal').modal('show')" style="margin-top: 5px;">Домашка</a>
+        </div>
+        {% if profile.status == 'student' %}
+        <span style="font-size: 13px; color: #828282;">
+            {% if homework_list.0.1 == 1 %}
+                Решена 1 задача
+            {% elif homework_list.0.1 < 5 %}
+                Решены {{ homework_list.0.1 }} задачи
+            {% else %}
+                Решены {{ homework_list.0.1 }} задач
+            {% endif %} из {{ homework_list.0.2|length }} 
+        </span>
+        {% endif %}
+        <br><br>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load urlify %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}
+{{ instance.title }} | {{ block.super }}
+{% endblock head_title %}
+
+
+{% block content %}
+<div class='ui container'>
+    <a class="button ui blue" href='{{ instance.content_object.get_absolute_url }}'>
+        <i class="angle left icon"></i> Back to course
+    </a>
+    <h3>Lecture {{ instance.title }} <a style="margin-left: 30px; font-size: 15px;" href="{{ instance.get_profile }}">{{ instance.user.username }}</a>
+    {% if staff == "yes" %}
+    <a href='{{ instance.get_delete_url }}' class="ui tiny button" style="margin-left: 30px;">Delete</a>
+    {% endif %}
+    </h3>
+    <h4>{{ instance.content }}</h4>
+    <span style="color: #848484; font-weight: 600">Solved {{ number_of_solved }} of {{ instance.problems|length }} problems</span>
+    <div style="margin-top: 20px;">
+    {% for element_of_user in array_of_user %}
+            <div class="ui segment">
+                <h5> 
+                    <a href='{{ element_of_user.0.get_absolute_url }}' class="item" >
+                        {{ forloop.counter }}. <span >{{ element_of_user.0.title }}</span>
+                    </a> 
+                    {% if staff == "yes" %}
+                        <a href='{{ element_of_user.0.get_delete_url }}' class="ui tiny button" style="margin-left: 30px;">Delete</a>
+                    {% endif %}
+                </h5>
+                <p style="font-weight: 600; font-size: 17px;">{{ element_of_user.0.content2 }}</p>
+            </div>
+            <div class="ui grid" id="news-features" style="padding: 7px;">
+                {% if is_auth == True %}
+                    {% if element_of_user.1.solved == False %}
+                    <span class="item" style="margin-right: 15px; color: #FE2E2E; font-weight: 600">Not solved</span>
+                    {% else %}
+                    <span class="item" style="margin-right: 15px; color: #04B431; font-weight: 600;">Solved</span>
+                    {% endif %}
+                {% endif %}
+                {% for hs in element_of_user.2 %}
+                    <a href="{{ hs.url }}" class="hashtag">#{{ hs.name }}</a>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+
+        <!--<a class="btn btn-info" href="">Create problem</a>-->
+    </div>
+    {% if staff == "yes" %}
+    <h4 style="margin-top: 150px;"> Staff only: Create new Problem:</h4>
+    <form class="comment_form" method="POST" action='' enctype='multipart/form-data'> {% csrf_token %}
+        <div class="ui form" id="submit-problem">
+            {{ create_problem_form|crispy }}
+        </div>
+        <div class="ui input">
+            <input type='submit' class='ui button green' style="margin-top:20px" value='Create problem'>
+        </div>
+    </form>
+    {% endif %}
+
+</div>
+
+
+{% endblock content %}

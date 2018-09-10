@@ -1,0 +1,117 @@
+{% load crispy_forms_tags %}
+<style type="text/css">
+    td{
+        padding: 12px 2px !important;
+    }
+    th{
+        font-size: 11px;
+    }
+    .present{
+        width: 70px; height: 25px; padding: 7px 2px !important;
+    }
+    .absent{
+        width: 70px; height: 25px; padding: 7px 2px !important;
+        margin-top: 2px !important;
+    }
+    .late{
+        width: 70px; height: 25px; padding: 7px 2px !important;
+        margin-top: 2px !important;
+    }
+
+</style>
+
+<div class="ui tab {% if 'profile_attendance' in profile.page %}active{% endif %}" data-tab="attendance">
+    <div class="ui segment" style="padding: 14px">
+        {% if hisattendance|length == 0 %}
+            <i>У Вас еще нет групп</i>
+        {% endif %}
+        {% for sq in hisattendance %}
+            <h4>    
+                Журнал группы <a href="{{ sq.0.get_absolute_url }}">{{ sq.0.title }}</a>
+            </h4>
+            <div class="content" >
+                <form class="ui form" method='POST' style="display:flex;height:auto;">{% csrf_token %}
+                        <div style="padding-right: 0; width:auto;">
+                            <table class="ui celled table text-center" style="background-color: #4a4a4a; color: white; width: auto;">
+                                <tbody>
+                                    <tr>
+                                        <th style="padding: 14px 0;color: #4a4a4a;">_</th>
+                                    </tr>
+                                    {% for profile in sq.2 %}
+                                    {% if profile.0 != sq.0.author_profile %}
+                                    <tr style="height: 102.21px;">
+                                        <td>
+                                            {{ profile.0.user }}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="overflow: auto; overflow-y:hidden; padding-left: 0;width:auto; height: auto;">
+                            <table class="ui celled table text-center" style="background-color: #4a4a4a; color: white">
+                                <tbody>
+                                    <tr>
+                                        {% for time in sq.1 %}
+                                        <th style="min-width: 177px; padding: 14px 0;">
+                                            {{ time }}
+                                        </th>
+                                        {% endfor %}
+                                    </tr>
+                                    {% for profile in sq.2 %}
+                                    {% if profile.0 != sq.0.author_profile %}
+                                    <tr>
+                                        {% for att in profile.1 %}
+                                        <td>
+                                            <div class="ui grid" style="width: 200px;">
+                                                <div class="eight wide column">
+                                                    <textarea style="padding: 5px; height: 30px; width: 70px;" type="text" id='grade{{ att.id }}'>{% if att.grade > 0 %}{{ att.grade }}{% endif %}</textarea>
+                                                    <a class="ui button mini blue zhurnal_grade" name="{{ att.id }}" data-href='{{ att.student.change_att_url }}' style="width: 70px; height: 25px; padding: 7px 2px;margin-top: 2px;">✓</a>
+                                                </div>
+                                                <div class="eight wide column" style="padding: 14px 0">
+                                                    {% if att.present == 'present' %}
+                                                    <a class="ui button mini present green" id="present{{ att.id }}" id2="{{ att.id }}" data-href='{{ att.student.change_att_url }}'>
+                                                        На уроке
+                                                    </a>
+                                                    {% else %}
+                                                    <a class="ui button mini present" id="present{{ att.id }}" id2="{{ att.id }}" data-href='{{ att.student.change_att_url }}'>
+                                                        На уроке
+                                                    </a>
+                                                    {% endif %}
+                                                    <br>
+                                                    {% if att.present == 'absent' %}
+                                                    <a class="ui button mini absent red" id="absent{{ att.id }}" id2="{{ att.id }}" data-href='{{ att.student.change_att_url }}'>
+                                                        Отсутсвует
+                                                    </a>
+                                                    {% else %}
+                                                    <a class="ui button mini absent" id="absent{{ att.id }}" id2="{{ att.id }}" data-href='{{ att.student.change_att_url }}'>
+                                                        Отсутсвует
+                                                    </a>    
+                                                    {% endif %}
+                                                    <br>
+                                                    {% if att.present == 'late' %}
+                                                    <a class="ui button mini late yellow" id="late{{ att.id }}" id2="{{ att.id }}" data-href='{{ att.student.change_att_url }}'>
+                                                        Опоздал
+                                                    </a>               
+                                                    {% else %}
+                                                    <a class="ui button mini late" id="late{{ att.id }}" id2="{{ att.id }}" data-href='{{ att.student.change_att_url }}'>
+                                                        Опоздал
+                                                    </a>               
+                                                    {% endif %}
+                                                    <br>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</div>

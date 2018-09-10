@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+{{ hisprofile.user }} | {{ block.super }}
+{% endblock head_title %}
+
+{% block head_extra %}
+{{ form.media }}
+{{ paper_form.media }}
+{% endblock head_extra %}
+
+{% block content %}
+<div id="profile">
+    <div class="ui container" >
+        <div class="ui stackable grid">
+            <div class="eleven wide column">
+                <div class="ui stackable grid">
+                    <div class="four wide column left-side" style="padding: 14px 0;">
+                        {% include 'profile/avatar.html' %}
+                    </div>
+                    <div class="twelve wide column right-side" style="padding-top: 0">
+                        <div class="info">
+                            {% include 'profile/main_info.html' %}
+
+                            {% if profile.user.username == main_page.admin_name and profile == hisprofile or hisprofile.status == 'trener' %}
+                            <div class="ui top menu">
+                                {% if profile.user.username == main_page.admin_name and profile == hisprofile %}
+                                <a style="width: 25%; padding-left: 0; padding-right: 0; text-align: center;display: block;" class="item open_page {% if 'profile_info' in profile.page %}active{% endif %}" data-tab="info" data-href="{{ profile.change_page_url }}" page='profile_info'>Информация</a>
+                                <a style="width: 25%; padding-left: 0; padding-right: 0; text-align: center;display: block;" class="item open_page {% if 'profile_attendance' in profile.page %}active{% endif %}" data-tab="attendance" data-href='{{ profile.change_page_url }}' page='profile_attendance'>Журналы</a>
+                                <a style="width: 25%; padding-left: 0; padding-right: 0; text-align: center;display: block;" class="item open_page {% if 'profile_zaiavki' in profile.page %}active{% endif %}" data-tab="zaiavki" data-href="{{ profile.change_page_url }}" page='profile_zaiavki'>Заявки</a>
+                                <a style="width: 25%; padding-left: 0; padding-right: 0; text-align: center;display: block;" class="open_page item {% if 'profile_squads' in profile.page %}active{% endif %}" data-tab="squads" data-href="{{ profile.change_page_url }}" page='profile_squads' page='profile_squads'>Все группы</a>
+                                {% elif profile.status == 'trener' and hisprofile.status == 'trener' %}
+                                <a style="width: 25%; padding-left: 0; padding-right: 0; text-align: center;display: block;" class="item open_page {% if 'profile_info' in profile.page %}active{% endif %}" data-tab="info" data-href="{{ profile.change_page_url }}" page='profile_info'>Информация</a>
+                                <a style="width: 25%; padding-left: 0; padding-right: 0; text-align: center;display: block;" class="item open_page {% if 'profile_attendance' in profile.page %}active{% endif %}" data-tab="attendance" data-href='{{ profile.change_page_url }}' page='profile_attendance'>Журналы</a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            {% include 'profile/detailed_info.html' %}
+                            {% include 'profile/attendance.html' %}
+                            {% include 'profile/zaiavki.html' %}
+                            {% include 'profile/all_squads.html' %}
+                        </div>    
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+{% include 'profile/homework.html' %}
+{% include 'profile/urok.html' %}
+{% endblock content %}
